@@ -1,0 +1,124 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-2">Usuarios</h1>
+    <p class="text-base-content/60 mb-6">Total registrados: {{ total() }}</p>
+
+    <!-- Search -->
+    <form
+        (ngSubmit)="onSearch()"
+        class="flex gap-2 mb-6"
+    >
+        <input
+            type="text"
+            [formControl]="searchControl"
+            placeholder="Buscar por nombre..."
+            class="input input-bordered flex-1"
+            aria-label="Buscar usuarios por nombre"
+        />
+        <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="loading()"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+            </svg>
+            Buscar
+        </button>
+        @if (searchControl.value) {
+        <button
+            type="button"
+            class="btn btn-ghost"
+            (click)="clearSearch()"
+        >Limpiar</button>
+        }
+    </form>
+
+    <!-- States -->
+    @if (loading()) {
+    <div class="flex flex-col gap-4">
+        @for (_ of [1, 2, 3]; track $index) {
+        <div class="skeleton h-16 w-full rounded-lg"></div>
+        }
+    </div>
+    } @else if (error()) {
+    <div
+        role="alert"
+        class="alert alert-error"
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+        </svg>
+        <span>{{ error() }}</span>
+        <button
+            class="btn btn-sm btn-ghost"
+            (click)="loadUsers()"
+        >Reintentar</button>
+    </div>
+    } @else {
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Roles</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (user of users(); track user.id) {
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="avatar placeholder">
+                                <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                                    <span class="text-xs">{{ user.name.charAt(0).toUpperCase() }}</span>
+                                </div>
+                            </div>
+                            <span class="font-medium">{{ user.name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        @for (role of user.roles; track role) {
+                        <span class="badge badge-outline badge-sm mr-1">{{ role }}</span>
+                        }
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td
+                        colspan="4"
+                        class="text-center text-base-content/50 py-8"
+                    >
+                        No se encontraron usuarios
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

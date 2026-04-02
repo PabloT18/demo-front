@@ -1,59 +1,64 @@
-# MyPage
+# My Page — Angular 21 + Signals + DaisyUI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+Frontend SPA para la demostración de arquitectura en capas con consumo de API REST.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Angular 21 (standalone components) |
+| Estado | Signals + computed |
+| Estilos | TailwindCSS 4 + DaisyUI 5 |
+| HTTP | HttpClient con interceptor JWT |
+| Routing | Lazy loading + functional guards |
+| Build | esbuild vía Angular CLI |
+| Package manager | pnpm |
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Inicio rápido
 
 ```bash
-ng generate --help
+pnpm install
+pnpm start
 ```
 
-## Building
+La app inicia en **http://localhost:4200**.  
+Requiere el backend corriendo en `http://localhost:8080`.
 
-To build the project run:
+## Rutas
 
-```bash
-ng build
+| Ruta | Componente | Guard | Descripción |
+|------|-----------|-------|-------------|
+| `/login` | LoginPageComponent | publicGuard | Formulario de login |
+| `/users` | UsersPageComponent | authGuard | Tabla de usuarios |
+| `/` | — | — | Redirige a `/users` |
+
+## Arquitectura
+
+```
+src/app/
+  core/
+    guards/          → authGuard, publicGuard (CanActivateFn)
+    interceptors/    → authInterceptor (HttpInterceptorFn)
+    models/          → AuthUser, LoginRequest
+    services/        → AuthService (signals + localStorage)
+
+  features/
+    auth/pages/      → LoginPageComponent (reactive form)
+    users/
+      models/        → User
+      pages/         → UsersPageComponent (signals, búsqueda)
+      services/      → UsersService
+
+  shared/
+    components/      → NavbarComponent (auth state, dropdown)
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Patrones usados
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Signals** para estado reactivo (`signal`, `computed`)
+- **@if / @for** control flow nativo (sin `*ngIf`, `*ngFor`)
+- **Reactive Forms** con validaciones
+- **Functional guards e interceptors** (sin clases)
+- **Lazy loading** de rutas con `loadComponent`
+- **OnPush** change detection en todos los componentes
+- **inject()** en vez de constructor injection
