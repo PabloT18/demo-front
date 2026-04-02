@@ -2,47 +2,75 @@
     <h1 class="text-3xl font-bold mb-2">Usuarios</h1>
     <p class="text-base-content/60 mb-6">Total registrados: {{ total() }}</p>
 
-    <!-- Search -->
-    <form
-        (ngSubmit)="onSearch()"
-        class="flex gap-2 mb-6"
-    >
-        <input
-            type="text"
-            [formControl]="searchControl"
-            placeholder="Buscar por nombre..."
-            class="input input-bordered flex-1"
-            aria-label="Buscar usuarios por nombre"
-        />
-        <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="loading()"
+    <!-- Controls -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Search -->
+        <form
+            (ngSubmit)="onSearch()"
+            class="flex gap-2 md:col-span-2"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <input
+                type="text"
+                [formControl]="searchControl"
+                placeholder="Buscar por nombre..."
+                class="input input-bordered flex-1"
+                aria-label="Buscar usuarios por nombre"
+            />
+            <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading()"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                </svg>
+                Buscar
+            </button>
+            @if (searchControl.value) {
+            <button
+                type="button"
+                class="btn btn-ghost"
+                (click)="clearSearch()"
+            >Limpiar</button>
+            }
+        </form>
+
+        <!-- Size & Show All -->
+        <div class="flex gap-2 items-center">
+            <select
+                class="select select-bordered select-sm"
+                [value]="pageSize()"
+                [disabled]="showAll() || loading()"
+                (change)="onSizeChange(+$any($event.target).value)"
+                aria-label="Elementos por página"
+            >
+                <option [value]="5">5 por página</option>
+                <option [value]="10">10 por página</option>
+            </select>
+
+            <label class="label cursor-pointer gap-2">
+                <input
+                    type="checkbox"
+                    class="checkbox checkbox-sm"
+                    [checked]="showAll()"
+                    [disabled]="loading()"
+                    (change)="onShowAllChange($any($event.target).checked)"
                 />
-            </svg>
-            Buscar
-        </button>
-        @if (searchControl.value) {
-        <button
-            type="button"
-            class="btn btn-ghost"
-            (click)="clearSearch()"
-        >Limpiar</button>
-        }
-    </form>
+                <span class="label-text whitespace-nowrap">Mostrar todos</span>
+            </label>
+        </div>
+    </div>
 
     <!-- States -->
     @if (loading()) {
@@ -120,5 +148,16 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination -->
+    @if (!showAll() && totalPages() > 1) {
+    <div class="mt-6">
+        <app-pagination
+            [totalPages]="totalPages()"
+            [currentPage]="currentPage()"
+            (pageChange)="onPageChange($event)"
+        />
+    </div>
+    }
     }
 </div>
