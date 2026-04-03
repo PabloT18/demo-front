@@ -25,7 +25,10 @@
     </div>
 
     <!-- Right: Auth area -->
-    <div class="flex-none">
+    <div class="flex-none gap-2">
+        <!-- Theme Switcher -->
+        <app-theme-switcher />
+
         @if (isAuthenticated()) {
         <div class="dropdown dropdown-end">
             <div

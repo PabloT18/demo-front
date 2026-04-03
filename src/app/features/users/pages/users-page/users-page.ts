@@ -1,13 +1,23 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user.model';
-import { PageResponse } from '../../../../shared/models/page.model';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { UserListHeaderComponent } from '../../components/user-list-header/user-list-header';
+import { UserSearchFormComponent } from '../../components/user-search-form/user-search-form';
+import { UserFiltersComponent } from '../../components/user-filters/user-filters';
+import { UserTableComponent } from '../../components/user-table/user-table';
 
 @Component({
     selector: 'app-users-page',
-    imports: [ReactiveFormsModule, PaginationComponent],
+    imports: [
+        PaginationComponent,
+        UserListHeaderComponent,
+        UserSearchFormComponent,
+        UserFiltersComponent,
+        UserTableComponent,
+    ],
     templateUrl: './users-page.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,8 +67,25 @@ export class UsersPageComponent implements OnInit {
                 }
                 this.loading.set(false);
             },
-            error: () => {
-                this.error.set('No fue posible cargar los usuarios. Verifique que el servidor esté activo.');
+            error: (error: HttpErrorResponse) => {
+                // El interceptor maneja automáticamente errores 401 (logout)
+                // Aquí solo manejamos otros tipos de errores
+
+                if (error.status === 0) {
+                    // Error de red o CORS
+                    this.error.set('No se puede conectar con el servidor. Verifique su conexión a internet.');
+                } else if (error.status >= 500) {
+                    // Error del servidor
+                    this.error.set('Error del servidor. Por favor, intente nuevamente más tarde.');
+                } else if (error.status === 401) {
+                    // El usuario será redirigido al login por el interceptor
+                    // Este mensaje probablemente no se verá
+                    this.error.set('Sesión expirada. Redirigiendo al login...');
+                } else {
+                    // Otros errores
+                    this.error.set('No fue posible cargar los usuarios. Por favor, intente nuevamente.');
+                }
+
                 this.loading.set(false);
             },
         });
@@ -90,5 +117,10 @@ export class UsersPageComponent implements OnInit {
         this.showAll.set(showAll);
         this.currentPage.set(0);
         this.loadUsers();
+    }
+
+    onUserClick(user: User): void {
+        // Aquí puedes agregar lógica para cuando se hace clic en un usuario
+        console.log('Usuario seleccionado:', user);
     }
 }

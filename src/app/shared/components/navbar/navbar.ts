@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeSwitcherComponent } from '../theme-switcher/theme-switcher';
 
 @Component({
     selector: 'app-navbar',
-    imports: [RouterLink, RouterLinkActive],
+    imports: [RouterLink, RouterLinkActive, ThemeSwitcherComponent],
     templateUrl: './navbar.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

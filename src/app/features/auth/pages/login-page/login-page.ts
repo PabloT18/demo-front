@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
@@ -39,9 +40,19 @@ export class LoginPageComponent {
                 this.loading.set(false);
                 this.router.navigate(['/users']);
             },
-            error: () => {
-                this.errorMessage.set('Credenciales incorrectas. Intente de nuevo.');
+            error: (error: HttpErrorResponse) => {
                 this.loading.set(false);
+
+                // Mensajes específicos según el tipo de error
+                if (error.status === 0) {
+                    this.errorMessage.set('No se puede conectar con el servidor. Verifique su conexión.');
+                } else if (error.status === 401 || error.status === 400) {
+                    this.errorMessage.set('Credenciales incorrectas. Verifique su email y contraseña.');
+                } else if (error.status >= 500) {
+                    this.errorMessage.set('Error del servidor. Intente nuevamente más tarde.');
+                } else {
+                    this.errorMessage.set('Error al iniciar sesión. Por favor, intente nuevamente.');
+                }
             },
         });
     }

@@ -1,0 +1,51 @@
+<div class="overflow-x-auto bg-base-100 rounded-2xl shadow-2xl border border-base-300">
+    <table class="table w-full">
+        <thead>
+            <tr class="bg-linear-to-r from-primary/10 to-secondary/10 border-b-2 border-primary/20">
+                <th class="text-primary font-bold">ID</th>
+                <th class="text-primary font-bold">Nombre</th>
+                <th class="text-primary font-bold">Correo</th>
+                <th class="text-primary font-bold">Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (user of users(); track user.id) {
+            <tr
+                class="hover:bg-base-200 transition-colors cursor-pointer"
+                (click)="onUserClick(user)"
+            >
+                <td class="font-semibold text-primary">{{ user.id }}</td>
+                <td>
+                    <div class="flex items-center gap-3">
+                        <div class="avatar placeholder">
+                            <div
+                                class="bg-linear-to-br from-primary to-secondary text-primary-content w-10 h-10 rounded-full shadow-lg">
+                                <span class="text-sm font-bold">{{ user.name.charAt(0).toUpperCase() }}</span>
+                            </div>
+                        </div>
+                        <span class="font-semibold">{{ user.name }}</span>
+                    </div>
+                </td>
+                <td class="text-base-content/80">{{ user.email }}</td>
+                <td>
+                    @for (role of user.roles; track role) {
+                    <span class="badge badge-primary badge-outline badge-sm mr-1 shadow-sm">{{ role }}</span>
+                    }
+                </td>
+            </tr>
+            } @empty {
+            <tr>
+                <td
+                    colspan="4"
+                    class="p-0"
+                >
+                    <app-empty-state
+                        icon="users"
+                        message="No se encontraron usuarios"
+                    />
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

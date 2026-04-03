@@ -1,0 +1,27 @@
+<!-- Size & Show All mejorado -->
+<div class="flex gap-2 items-center">
+    <select
+        class="select select-bordered select-sm select-primary shadow-md"
+        [value]="pageSize()"
+        [disabled]="showAll() || loading()"
+        (change)="onSizeChange(+$any($event.target).value)"
+        aria-label="Elementos por página"
+    >
+        @for (size of pageSizeOptions(); track size) {
+        <option [value]="size">{{ size }} por página</option>
+        }
+    </select>
+
+    <label
+        class="label cursor-pointer gap-2 bg-base-100 rounded-lg px-3 py-2 shadow-md hover:shadow-lg transition-shadow"
+    >
+        <input
+            type="checkbox"
+            class="checkbox checkbox-sm checkbox-primary"
+            [checked]="showAll()"
+            [disabled]="loading()"
+            (change)="onShowAllChange($any($event.target).checked)"
+        />
+        <span class="label-text whitespace-nowrap font-medium">Mostrar todos</span>
+    </label>
+</div>
