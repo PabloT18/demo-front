@@ -1,0 +1,131 @@
+<div class="container mx-auto px-4 py-12 max-w-7xl">
+    <!-- Hero Header -->
+    <header class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            Descubre nuestra Comunidad
+        </h1>
+        <p class="text-base-content/60 text-lg max-w-2xl mx-auto">
+            Explora los perfiles de los miembros de nuestra plataforma.
+        </p>
+        <div class="divider max-w-xs mx-auto"></div>
+    </header>
+
+    <!-- Initial Loading State -->
+    @if (initialLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @for (_ of skeletons; track $index) {
+        <div class="card bg-base-200">
+            <div class="card-body items-center text-center gap-3">
+                <div class="skeleton w-20 h-20 rounded-full"></div>
+                <div class="skeleton h-5 w-32"></div>
+                <div class="skeleton h-3 w-40"></div>
+                <div class="flex gap-1.5">
+                    <div class="skeleton h-5 w-16 rounded-full"></div>
+                    <div class="skeleton h-5 w-20 rounded-full"></div>
+                </div>
+                <div class="skeleton h-8 w-24 rounded-lg mt-2"></div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+    <!-- Error State (no users loaded) -->
+    @else if (error() && users().length === 0) {
+    <div class="flex flex-col items-center justify-center py-20">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-16 w-16 text-error/50 mb-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+        </svg>
+        <h2 class="text-xl font-semibold mb-2">Algo salió mal</h2>
+        <p class="text-base-content/60 mb-6 text-center max-w-md">{{ error() }}</p>
+        <button
+            class="btn btn-primary"
+            (click)="retry()"
+        >
+            Reintentar
+        </button>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @else if (isEmpty()) {
+    <div class="flex flex-col items-center justify-center py-20">
+        <div
+            class="text-6xl mb-6"
+            aria-hidden="true"
+        >👥</div>
+        <h2 class="text-xl font-semibold mb-2">No hay usuarios disponibles</h2>
+        <p class="text-base-content/60">Aún no se han registrado usuarios en la plataforma.</p>
+    </div>
+    }
+
+    <!-- Users Grid -->
+    @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @for (user of users(); track user.id) {
+        <app-user-profile-card
+            [user]="user"
+            (viewProfile)="onViewProfile($event)"
+        />
+        }
+
+        <!-- Loading More Skeletons -->
+        @if (showLoadingMore()) {
+        @for (_ of loadingSkeletons; track $index) {
+        <div class="card bg-base-200 animate-pulse">
+            <div class="card-body items-center text-center gap-3">
+                <div class="skeleton w-20 h-20 rounded-full"></div>
+                <div class="skeleton h-5 w-32"></div>
+                <div class="skeleton h-3 w-40"></div>
+            </div>
+        </div>
+        }
+        }
+    </div>
+
+    <!-- Inline error when loading more fails -->
+    @if (error() && users().length > 0) {
+    <div class="flex justify-center mt-8">
+        <div
+            role="alert"
+            class="alert alert-error alert-soft max-w-md"
+        >
+            <span>{{ error() }}</span>
+            <button
+                class="btn btn-sm btn-error btn-outline"
+                (click)="retry()"
+            >Reintentar</button>
+        </div>
+    </div>
+    }
+
+    <!-- Scroll Sentinel -->
+    @if (hasMore() && !error()) {
+    <div
+        #scrollSentinel
+        class="h-4 w-full"
+        aria-hidden="true"
+    ></div>
+    }
+
+    <!-- End of results -->
+    @if (!hasMore() && users().length > 0) {
+    <div class="text-center py-10">
+        <div class="divider max-w-xs mx-auto"></div>
+        <p class="text-base-content/40 text-sm">Has llegado al final de la lista</p>
+    </div>
+    }
+    }
+</div>

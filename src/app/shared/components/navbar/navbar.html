@@ -15,9 +15,19 @@
                 <a
                     routerLink="/users"
                     routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
                     class="font-medium"
                 >
                     Usuarios
+                </a>
+            </li>
+            <li>
+                <a
+                    routerLink="/community"
+                    routerLinkActive="active"
+                    class="font-medium"
+                >
+                    Comunidad
                 </a>
             </li>
         </ul>

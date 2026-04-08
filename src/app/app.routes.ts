@@ -19,6 +19,14 @@ export const routes: Routes = [
                 (m) => m.UsersPageComponent
             ),
     },
+    {
+        path: 'community',
+        canActivate: [authGuard],
+        loadComponent: () =>
+            import('./features/users/pages/community-gallery/community-gallery').then(
+                (m) => m.CommunityGalleryComponent
+            ),
+    },
     { path: '', redirectTo: 'users', pathMatch: 'full' },
     { path: '**', redirectTo: 'users' },
 ];

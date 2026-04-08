@@ -7,6 +7,7 @@ import { UserListHeaderComponent } from '../../components/user-list-header/user-
 import { UserSearchFormComponent } from '../../components/user-search-form/user-search-form';
 import { UserFiltersComponent } from '../../components/user-filters/user-filters';
 import { UserTableComponent } from '../../components/user-table/user-table';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-users-page',
@@ -16,6 +17,7 @@ import { UserTableComponent } from '../../components/user-table/user-table';
         UserSearchFormComponent,
         UserFiltersComponent,
         UserTableComponent,
+        RouterLink,
     ],
     templateUrl: './users-page.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
