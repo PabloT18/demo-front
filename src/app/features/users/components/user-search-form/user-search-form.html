@@ -1,19 +1,18 @@
 <!-- Search con sombra -->
-<form
-    (ngSubmit)="onSubmit()"
-    class="flex gap-2 md:col-span-2"
->
+<div class="flex gap-2 md:col-span-2">
     <input
         type="text"
-        [formControl]="searchControl()"
+        [formControl]="searchControl"
         placeholder="Buscar por nombre..."
         class="input input-bordered input-primary flex-1 shadow-md focus:shadow-lg transition-shadow"
         aria-label="Buscar usuarios por nombre"
+        (keyup.enter)="onSubmit()"
     />
     <button
-        type="submit"
+        type="button"
         class="btn btn-primary shadow-md hover:shadow-lg transition-all"
         [disabled]="loading()"
+        (click)="onSubmit()"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -31,11 +30,11 @@
         </svg>
         Buscar
     </button>
-    @if (searchControl().value) {
+    @if (searchControl.value) {
     <button
         type="button"
         class="btn btn-ghost shadow-md hover:shadow-lg transition-all"
         (click)="onClear()"
     >Limpiar</button>
     }
-</form>
+</div>

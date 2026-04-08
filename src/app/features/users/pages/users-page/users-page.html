@@ -7,9 +7,8 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Search Form -->
             <app-user-search-form
-                [searchControl]="searchControl"
                 [loading]="loading()"
-                (search)="onSearch()"
+                (search)="onSearch($event)"
                 (clear)="clearSearch()"
             />
 

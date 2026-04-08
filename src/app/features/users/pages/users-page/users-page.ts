@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user.model';
@@ -36,7 +35,7 @@ export class UsersPageComponent implements OnInit {
 
     readonly total = computed(() => this.showAll() ? this.users().length : this.totalElements());
 
-    readonly searchControl = new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] });
+    readonly searchName = signal<string>('');
 
     ngOnInit(): void {
         this.loadUsers();
@@ -46,7 +45,7 @@ export class UsersPageComponent implements OnInit {
         this.loading.set(true);
         this.error.set(null);
 
-        const name = this.searchControl.value.trim() || undefined;
+        const name = this.searchName() || undefined;
         const params = {
             name,
             all: this.showAll(),
@@ -91,13 +90,14 @@ export class UsersPageComponent implements OnInit {
         });
     }
 
-    onSearch(): void {
+    onSearch(searchValue: string): void {
+        this.searchName.set(searchValue);
         this.currentPage.set(0);
         this.loadUsers();
     }
 
     clearSearch(): void {
-        this.searchControl.setValue('');
+        this.searchName.set('');
         this.currentPage.set(0);
         this.loadUsers();
     }
@@ -121,6 +121,5 @@ export class UsersPageComponent implements OnInit {
 
     onUserClick(user: User): void {
         // Aquí puedes agregar lógica para cuando se hace clic en un usuario
-        console.log('Usuario seleccionado:', user);
     }
 }

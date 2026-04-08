@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-user-search-form',
@@ -8,17 +8,20 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserSearchFormComponent {
-    readonly searchControl = input.required<FormControl<string>>();
     readonly loading = input<boolean>(false);
 
-    readonly search = output<void>();
+    readonly searchControl = new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] });
+
+    readonly search = output<string>();
     readonly clear = output<void>();
 
     onSubmit(): void {
-        this.search.emit();
+        const searchValue = this.searchControl.value.trim();
+        this.search.emit(searchValue);
     }
 
     onClear(): void {
+        this.searchControl.setValue('');
         this.clear.emit();
     }
 }
